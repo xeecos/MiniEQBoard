@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>ESPStepper</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="jquery.min.js"></script>
+    <script src="lang.js"></script>
+</head>
+
+<body>
+    <div class="tab">
+        <button id="defaultOpen" class="tablinks" onclick="openPage(event, 'Velocity')"
+            data-sw-translate>Velocity</button>
+        <button class="tablinks" onclick="openPage(event, 'Position')" data-sw-translate>Position</button>
+        <!-- <button class="tablinks" onclick="openPage(event, 'Browser')" data-sw-translate>Browser</button> -->
+        <button class="tablinks" onclick="openPage(event, 'Setting')" data-sw-translate>Setting</button>
+    </div>
+    <div id="appLoading" style="display: none">
+        <span style="width:100%;text-align:center;" data-sw-translate>loading...</span>
+    </div>
+    <div id="Velocity" class="tabcontent">
+        <div>
+            <div><span data-sw-translate>Speed:</span><input type="number" id="speed-input" autoFocus value="1"
+                    style="position:absolute;right:42px;width:80px;text-align: center;border-top: 0px;border-left: 0px;border-right: 0px;"></input><span
+                    data-sw-translate style="position:absolute;right:6px;">X</span>
+            </div>
+            <div><input type="range" min="1" max="10" value="1" class="slider" id="speed-range"></div>
+            <div style="margin-top:10px;">
+                <button style="height:40px;width:calc( 50% - 6px );margin-right:6px;" onclick="onBackwardDirection()"
+                    data-sw-translate>Backward</button>
+                <button style="height:40px;width:calc( 50% - 6px );" onclick="onForwardDirection()" data-sw-translate>Forward</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="Position" class="tabcontent">
+        <div>
+            <div><span data-sw-translate>Position:</span><input type="number" id="speed-input" autoFocus value="1"
+                    style="position:absolute;right:42px;width:80px;text-align: center;border-top: 0px;border-left: 0px;border-right: 0px;"></input><span
+                    data-sw-translate style="position:absolute;right:6px;">Turns</span>
+            </div>
+            <div><input type="range" min="1" max="10" value="1" class="slider" id="position-range"></div>
+            <div style="margin-top:10px;">
+                <button style="height:40px;width:calc( 50% - 6px );margin-right:6px;" onclick="onBackwardDirection()"
+                    data-sw-translate>Backward</button>
+                <button style="height:40px;width:calc( 50% - 6px );" onclick="onForwardDirection()" data-sw-translate>Forward</button>
+            </div>
+        </div>
+    </div>
+    <div id="Setting" class="tabcontent">
+        <div>
+            <div>
+                <span data-sw-translate>Current:</span>
+                <input type="number" id="current-input" autoFocus value="1000"
+                    style="position:absolute;right:42px;width:80px;text-align: center;border-top: 0px;border-left: 0px;border-right: 0px;"></input>
+                <span data-sw-translate style="position:absolute;right:6px;">mA</span>
+            </div>
+            <div><input type="range" min="1" max="2000" value="1000" class="slider" id="current-range"></div>
+            <div>
+                <span data-sw-translate>Microsteps:</span>
+                <input type="number" id="microsteps-input" autoFocus value="256"
+                    style="position:absolute;right:42px;width:80px;text-align: center;border-top: 0px;border-left: 0px;border-right: 0px;"></input>
+                <span data-sw-translate style="position:absolute;right:6px;"></span>
+            </div>
+            <div><input type="range" min="1" max="9" value="9" class="slider" id="microsteps-range"></div>
+            <div>
+                <span data-sw-translate>Gear Ratio:</span>
+                <input type="number" id="ratio-input" autoFocus value="34"
+                    style="position:absolute;right:42px;width:80px;text-align: center;border-top: 0px;border-left: 0px;border-right: 0px;"></input>
+                <span data-sw-translate style="position:absolute;right:6px;"></span>
+            </div>
+            <div><input type="range" min="1" max="256" value="34" class="slider" id="ratio-range"></div>
+            <div style="position:relative;height:100px;">
+                <label for="lang-select" data-sw-translate>Language:</label>
+                <select style="position:absolute;right:0px;" name="langs" id="lang-select">
+                    <option value="en">English</option>
+                    <option value="zh_CN">中文</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    <script src="api.js"></script>
+
+</body>
+
+</html>

@@ -82,7 +82,7 @@ void SSD1315::setPixel(int x, int y, bool black)
         _buffer[n] |= (1 << (idx % 8));
     }
     else {
-        _buffer[n] &= !(1 << (idx % 8));
+        _buffer[n] &= ~(1 << (idx % 8));
     }
 }
 bool SSD1315::getPixel(int x, int y) 

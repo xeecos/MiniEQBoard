@@ -3,8 +3,6 @@
 #define X_SSD1315_H
 
 #include <Wire.h>
-#include <XRender.h>
-
 
 #define SSD1315_DISPLAY_OFF 0xAE
 #define SSD1315_SET_DISPLAY_CLOCK 0xD5
@@ -28,9 +26,9 @@
 #define SSD1315_DISPLAY_WIDTH 128
 #define SSD1315_DISPLAY_HEIGHT 64
 
-class SSD1315 : public XRenderer {
+class SSD1315 {
 public:
-    SSD1315(TwoWire* wire, uint8_t i2cAddress, uint8_t* buffer);
+    SSD1315();
 
     int16_t getScreenWidth() const {
         return _width;
@@ -42,9 +40,11 @@ public:
     void begin();
     void sendBuffer();
     void clearScreen();
-
-    void renderScanlinePart(int16_t scanline, int16_t xmin, int16_t xmax, const uint16_t* lineBuffer) override;
-
+    void setPixel(int x, int y, bool black);
+    bool getPixel(int x, int y);
+    void drawLine(int x0, int y0, int x1, int y1, bool black);
+    void drawRect(int x, int y, int w, int h, bool black);
+    void drawCross(int x, int y, int w, int h, bool black);
 private:
     TwoWire* _wire = nullptr;
     uint8_t _i2cAddress = 0x00;

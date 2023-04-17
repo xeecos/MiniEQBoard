@@ -1,22 +1,25 @@
 
 #include "SSD1315.h"
-
-SSD1315::SSD1315(TwoWire* wire, uint8_t i2cAddress, uint8_t* buffer) {
-    _wire = wire ? wire : &Wire;
-    _i2cAddress = i2cAddress;
-    _buffer = buffer;
+#include <math.h>
+SSD1315::SSD1315()
+{
+    _wire = &Wire;
+    _i2cAddress = 0x3D;
     _width = SSD1315_DISPLAY_WIDTH;
     _height = SSD1315_DISPLAY_HEIGHT;
+    _buffer = (uint8_t *)malloc(SSD1315_DISPLAY_WIDTH * SSD1315_DISPLAY_HEIGHT / 8);
 }
 
-void SSD1315::sendCommand(uint8_t command) {
+void SSD1315::sendCommand(uint8_t command)
+{
     _wire->beginTransmission(_i2cAddress);
     _wire->write(0x80);
     _wire->write(command);
     _wire->endTransmission();
 }
 
-void SSD1315::begin() {
+void SSD1315::begin()
+{
     _wire->begin();
     sendCommand(SSD1315_DISPLAY_OFF);
     sendCommand(SSD1315_SET_DISPLAY_CLOCK);
@@ -45,14 +48,16 @@ void SSD1315::begin() {
     sendCommand(SSD1315_DISPLAY_ON);
 }
 
-void SSD1315::sendBuffer() {
+void SSD1315::sendBuffer()
+{
     sendCommand(SSD1315_ADDR_PAGE);
     sendCommand(0);
     sendCommand(_height / 8 - 1);
     sendCommand(SSD1315_ADDR_COLUMN);
     sendCommand(0);
     sendCommand(_width - 1);
-    for (uint16_t i = 0; i < _width * _height / 8; i++) {
+    for (uint16_t i = 0; i < _width * _height / 8; i++)
+    {
         _wire->beginTransmission(_i2cAddress);
         _wire->write(0x40);
 
@@ -64,29 +69,52 @@ void SSD1315::sendBuffer() {
     }
 }
 
-void SSD1315::clearScreen() {
+void SSD1315::clearScreen()
+{
     memset(_buffer, 0, _width * _height / 8);
 }
 
-void SSD1315::renderScanlinePart(int16_t scanline, int16_t xmin, int16_t xmax, const uint16_t* lineBuffer) {
-    if ((scanline >= _height) || (scanline < 0))
-        return;
-    if ((xmin < 0) || (xmax < 0) || (xmin >= _width) || (xmax >= _width) || (xmin > xmax))
-        return;
-
-    for (int16_t x = 0; x < _width; x++) {
-
-        /* The two-byte (RGB565) color value is stored in the form of RRRRRGGG:GGGBBBBB.
-         * To get a black or white color, an artificial check for the lightness is performed.
-         * Using the 11000110:00011000 bitmask, all bits except the most significant ones
-         * are clipped for each color component. 0xC618 is the hex value of the bitmask. 
-         */
-        bool color = lineBuffer[x] & 0xC618;
-
-        uint8_t p = scanline / 8;
-        uint16_t numByte = (p * 128) + x;
-        uint8_t numBit = scanline % 8;
-
-        _buffer[numByte] = color ? _buffer[numByte] |= 1 << numBit : _buffer[numByte] &= ~(1 << numBit);
+void SSD1315::setPixel(int x, int y, bool black) 
+{
+    int idx = y * 128 + x;
+    int n = floor(idx / 8);
+    if (black) {
+        _buffer[n] |= (1 << (idx % 8));
     }
+    else {
+        _buffer[n] &= !(1 << (idx % 8));
+    }
+}
+bool SSD1315::getPixel(int x, int y) 
+{
+    int idx = y * 128 + x;
+    int n = floor(idx / 8);
+    return (_buffer[n] >> (idx % 8)) & 1;
+}
+void SSD1315::drawLine(int x0, int y0, int x1, int y1, bool black) 
+{
+    int dx = x1 - x0, dy = y1 - y0;
+    int dist = dx * dx + dy * dy;
+    int steps = sqrt(dist) + 1;
+    dx /= steps;
+    dy /= steps;
+    double x = x0, y = y0;
+    for (int i = 0; i < steps; i++) {
+        setPixel(x>>0, y>>0, black);
+        x += dx;
+        y += dy;
+    }
+}
+void SSD1315::drawRect(int x, int y, int w, int h, bool black) 
+{
+    drawLine(x - w / 2 - 1, y - h / 2 - 1, x + w / 2, y - h / 2 - 1,black);
+    drawLine(x + w / 2, y - h / 2 - 1, x + w / 2, y + h / 2,black);
+    drawLine(x + w / 2, y + h / 2, x - w / 2 - 1, y + h / 2,black);
+    drawLine(x - w / 2 - 1, y + h / 2, x - w / 2 - 1, y - h / 2 - 1,black);
+}
+
+void SSD1315::drawCross(int x, int y, int w, int h, bool black) 
+{
+    drawLine(x, y - h / 2, x, y + h / 2 + 1,black);
+    drawLine(x - w / 2, y, x + w / 2 + 1, y,black);
 }

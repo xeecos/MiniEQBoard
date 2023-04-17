@@ -3,7 +3,7 @@
 #define X_SSD1315_H
 
 #include <Wire.h>
-#define SSD1315_ADDRESS     0x3D
+#define SSD1315_ADDRESS 0x3D
 #define SSD1315_DISPLAY_OFF 0xAE
 #define SSD1315_SET_DISPLAY_CLOCK 0xD5
 #define SSD1315_SET_MULTIPLEX_RATIO 0xA8
@@ -42,12 +42,13 @@ public:
 
     void begin();
     void sendBuffer();
-    void clearScreen();
+    void clearScreen(bool black = false);
     void setPixel(int x, int y, bool black);
     bool getPixel(int x, int y);
     void drawLine(int x0, int y0, int x1, int y1, bool black = false);
     void drawRect(int x, int y, int w, int h, bool black = false);
     void drawCross(int x, int y, int w, int h, bool black = false);
+    void fillRect(int x, int y, int w, int h, bool black = false);
 
 private:
     TwoWire *_wire = nullptr;

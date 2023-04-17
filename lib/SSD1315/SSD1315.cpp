@@ -69,9 +69,9 @@ void SSD1315::sendBuffer()
     }
 }
 
-void SSD1315::clearScreen()
+void SSD1315::clearScreen(bool black)
 {
-    memset(_buffer, 0, _width * _height / 8);
+    memset(_buffer, black?0xff:0x0, _width * _height / 8);
 }
 
 void SSD1315::setPixel(int x, int y, bool black) 
@@ -117,4 +117,12 @@ void SSD1315::drawCross(int x, int y, int w, int h, bool black)
 {
     drawLine(x, y - h / 2, x, y + h / 2 + 1,black);
     drawLine(x - w / 2, y, x + w / 2 + 1, y,black);
+}
+
+void SSD1315::fillRect(int x, int y, int w, int h, bool black) 
+{
+    for (int i = 0; i < h; i++) 
+    {
+        drawLine(x, y + i, x + w - 1, y + i, black);
+    }
 }

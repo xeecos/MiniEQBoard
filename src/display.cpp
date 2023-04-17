@@ -5,12 +5,14 @@ void display_init()
 {
     _oled.begin();
 }
-
 void display_clear()
 {
     _oled.clearScreen();
 }
-
+void display_fill_rect(int x, int y, int w, int h, bool black)
+{
+    _oled.fillRect(x, y, w, h, black);
+}
 void display_draw_line(int x0, int y0, int x1, int y1, bool black)
 {
     _oled.drawLine(x0, y0, x1, y1, black);

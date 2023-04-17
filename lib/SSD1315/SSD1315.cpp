@@ -93,14 +93,14 @@ bool SSD1315::getPixel(int x, int y)
 }
 void SSD1315::drawLine(int x0, int y0, int x1, int y1, bool black) 
 {
-    int dx = x1 - x0, dy = y1 - y0;
+    double dx = x1 - x0, dy = y1 - y0;
     int dist = dx * dx + dy * dy;
     int steps = sqrt(dist) + 1;
     dx /= steps;
     dy /= steps;
     double x = x0, y = y0;
     for (int i = 0; i < steps; i++) {
-        setPixel(x>>0, y>>0, black);
+        setPixel((int)x, (int)y, black);
         x += dx;
         y += dy;
     }

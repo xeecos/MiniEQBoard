@@ -11,8 +11,8 @@
 #define SSD1315_SET_START_LINE 0x40
 #define SSD1315_CHARGE_DCDC_PUMP 0x8D
 #define SSD1315_ADDR_MODE 0x20
-#define SSD1315_SET_REMAP_L_TO_R 0xA0 //0xA1
-#define SSD1315_SET_REMAP_T_TO_D 0xC0 //0xC8
+#define SSD1315_SET_REMAP_L_TO_R 0xA0 // 0xA1
+#define SSD1315_SET_REMAP_T_TO_D 0xC0 // 0xC8
 #define SSD1315_SET_COM_PINS 0xDA
 #define SSD1315_SET_CONTRAST 0x81
 #define SSD1315_SET_PRECHARGE_PERIOD 0xD9
@@ -26,14 +26,17 @@
 #define SSD1315_DISPLAY_WIDTH 128
 #define SSD1315_DISPLAY_HEIGHT 64
 
-class SSD1315 {
+class SSD1315
+{
 public:
     SSD1315();
 
-    int16_t getScreenWidth() const {
+    int16_t getScreenWidth() const
+    {
         return _width;
     }
-    int16_t getScreenHeight() const {
+    int16_t getScreenHeight() const
+    {
         return _height;
     }
 
@@ -42,13 +45,14 @@ public:
     void clearScreen();
     void setPixel(int x, int y, bool black);
     bool getPixel(int x, int y);
-    void drawLine(int x0, int y0, int x1, int y1, bool black);
-    void drawRect(int x, int y, int w, int h, bool black);
-    void drawCross(int x, int y, int w, int h, bool black);
+    void drawLine(int x0, int y0, int x1, int y1, bool black = false);
+    void drawRect(int x, int y, int w, int h, bool black = false);
+    void drawCross(int x, int y, int w, int h, bool black = false);
+
 private:
-    TwoWire* _wire = nullptr;
+    TwoWire *_wire = nullptr;
     uint8_t _i2cAddress = 0x00;
-    uint8_t* _buffer;
+    uint8_t *_buffer;
     int16_t _width = 0;
     int16_t _height = 0;
 

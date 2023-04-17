@@ -3,7 +3,7 @@
 #define X_SSD1315_H
 
 #include <Wire.h>
-
+#define SSD1315_ADDRESS     0x3D
 #define SSD1315_DISPLAY_OFF 0xAE
 #define SSD1315_SET_DISPLAY_CLOCK 0xD5
 #define SSD1315_SET_MULTIPLEX_RATIO 0xA8

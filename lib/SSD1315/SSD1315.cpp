@@ -4,7 +4,7 @@
 SSD1315::SSD1315()
 {
     _wire = &Wire;
-    _i2cAddress = 0x3D;
+    _i2cAddress = SSD1315_ADDRESS;
     _width = SSD1315_DISPLAY_WIDTH;
     _height = SSD1315_DISPLAY_HEIGHT;
     _buffer = (uint8_t *)malloc(SSD1315_DISPLAY_WIDTH * SSD1315_DISPLAY_HEIGHT / 8);
@@ -56,7 +56,7 @@ void SSD1315::sendBuffer()
     sendCommand(SSD1315_ADDR_COLUMN);
     sendCommand(0);
     sendCommand(_width - 1);
-    for (uint16_t i = 0; i < _width * _height / 8; i++)
+    for (uint16_t i = 0,count = _width * _height / 8; i < count; i++)
     {
         _wire->beginTransmission(_i2cAddress);
         _wire->write(0x40);

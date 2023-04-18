@@ -1,6 +1,7 @@
 
 #include "SSD1315.h"
 #include <math.h>
+#include <Arduino.h>
 SSD1315::SSD1315()
 {
     _wire = &Wire;
@@ -20,7 +21,6 @@ void SSD1315::sendCommand(uint8_t command)
 
 void SSD1315::begin()
 {
-    _wire->begin();
     sendCommand(SSD1315_DISPLAY_OFF);
     sendCommand(SSD1315_SET_DISPLAY_CLOCK);
     sendCommand(0x80);
@@ -60,35 +60,30 @@ void SSD1315::sendBuffer()
     {
         _wire->beginTransmission(_i2cAddress);
         _wire->write(0x40);
-
-        for (uint8_t x = 0; x < 16; x++)
-            _wire->write(_buffer[i++]);
-
-        i--;
+        _wire->write(_buffer[i]);
         _wire->endTransmission();
     }
 }
 
 void SSD1315::clearScreen(bool black)
 {
-    memset(_buffer, black?0xff:0x0, _width * _height / 8);
+    memset(_buffer, black?0x0:0xff, _width * _height / 8);
 }
 
 void SSD1315::setPixel(int x, int y, bool black) 
 {
-    int idx = y * 128 + x;
-    int n = floor(idx / 8);
+    int n = x+int(y/8)*_width;
     if (black) {
-        _buffer[n] |= (1 << (idx % 8));
+        _buffer[n] &= ~(1 << (y % 8));
     }
     else {
-        _buffer[n] &= ~(1 << (idx % 8));
+        _buffer[n] |= (1 << (y % 8));
     }
 }
 bool SSD1315::getPixel(int x, int y) 
 {
     int idx = y * 128 + x;
-    int n = floor(idx / 8);
+    int n = (idx / 8);
     return (_buffer[n] >> (idx % 8)) & 1;
 }
 void SSD1315::drawLine(int x0, int y0, int x1, int y1, bool black) 
@@ -100,7 +95,7 @@ void SSD1315::drawLine(int x0, int y0, int x1, int y1, bool black)
     dy /= steps;
     double x = x0, y = y0;
     for (int i = 0; i < steps; i++) {
-        setPixel((int)x, (int)y, black);
+        setPixel(x, y, black);
         x += dx;
         y += dy;
     }

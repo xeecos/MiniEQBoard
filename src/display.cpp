@@ -5,9 +5,13 @@ void display_init()
 {
     _oled.begin();
 }
-void display_clear()
+void display_clear(bool black)
 {
-    _oled.clearScreen();
+    _oled.clearScreen(black);
+}
+void display_render()
+{
+    _oled.sendBuffer();
 }
 void display_fill_rect(int x, int y, int w, int h, bool black)
 {

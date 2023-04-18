@@ -67,4 +67,5 @@ void service_init()
 void service_run()
 {
     server.handleClient();
+    delay(1);
 }

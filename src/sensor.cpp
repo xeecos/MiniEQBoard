@@ -7,8 +7,7 @@ MPU6050 mpu;
 QMC5883LCompass compass;
 void sensor_init()
 {
-    Wire.setPins(I2C_SDA, I2C_SCL);
-    Wire.begin();
+    Wire.begin(I2C_SDA, I2C_SCL, 400000);
     compass.init();
     mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G);
     mpu.calibrateGyro();

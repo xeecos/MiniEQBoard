@@ -128,7 +128,7 @@ void stepper_init()
     timerAlarmEnable(timer);
 }
 void stepper_microsteps(int microsteps)
-{   
+{
     stepper.microsteps(microsteps);
     stepper.push();
     angle_per = 1800.0 / stepper.microsteps() * 1000.0 / gear_ratio;
@@ -147,16 +147,15 @@ void stepper_ratio(double ratio)
 }
 void stepper_reset()
 {
-
 }
 void stepper_runSpeed(double speed)
 {
-    target_speed = speed;
+    target_speed = speed * gear_ratio * stepper.microsteps();
     stepper_mode = SPEED_MODE;
 }
 void stepper_move(long distance)
 {
-    stepper_moveTo(current_position+distance);
+    stepper_moveTo(current_position + distance);
 }
 void stepper_moveTo(long position)
 {
@@ -169,10 +168,10 @@ bool _step = false;
 void stepper_step(bool dir)
 {
     stepper_direction(dir);
-    digitalWrite(STEP_PIN,_step);
+    digitalWrite(STEP_PIN, _step);
     _step = !_step;
 }
 void stepper_direction(bool dir)
 {
-    digitalWrite(DIR_PIN,dir);
+    digitalWrite(DIR_PIN, dir);
 }

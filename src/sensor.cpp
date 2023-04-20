@@ -2,6 +2,7 @@
 #include "config.h"
 #include <QMC5883LCompass.h>
 #include <MPU6050.h>
+#include "log.h"
 #include "TLE5012B.h"
 MPU6050 mpu;
 QMC5883LCompass compass;
@@ -10,6 +11,7 @@ void sensor_init()
 {
     Wire.begin(I2C_SDA, I2C_SCL, 400000);
     compass.init();
+    compass.setSmoothing(10, true);
     mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G);
     mpu.calibrateGyro();
     mpu.setThreshold(3);
@@ -19,16 +21,13 @@ double sensor_get_azimuth()
 {
     compass.read();
     int az = compass.getAzimuth();
-    if (az > 180)
-    {
-        az -= 360;
-    }
+    // LOG_UART("x:%d  y:%d z:%d\n", compass.getX(), compass.getY(), compass.getZ());
     return az;
 }
 double sensor_get_pitch()
 {
-    Vector normAccel = mpu.readNormalizeAccel();
-    double pitch = -(atan2(normAccel.XAxis, sqrt(normAccel.YAxis * normAccel.YAxis + normAccel.ZAxis * normAccel.ZAxis)) * 180.0) / M_PI;
+    Vector norm = mpu.readScaledAccel();
+    double pitch = (1.0 - norm.YAxis) * 90.0;
     return pitch;
 }
 double sensor_get_velocity()

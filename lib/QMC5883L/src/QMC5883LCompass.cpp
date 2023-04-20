@@ -329,7 +329,7 @@ int QMC5883LCompass::_get(int i){
 **/
 int QMC5883LCompass::getAzimuth(){
 	int a = atan2( getY(), getX() ) * 180.0 / PI;
-	return a < 0 ? 360 + a : a;
+	return a;
 }
 
 

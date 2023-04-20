@@ -4,7 +4,7 @@
 #include "log.h"
 
 HardwareSerial uart(1);
-TMC2208Stepper stepper(&uart, 0.39);
+TMC2208Stepper stepper(&uart, 0.2);
 hw_timer_t *timer;
 STEPPER_MODE stepper_mode = SPEED_MODE;
 double current_speed = 0.0;
@@ -117,7 +117,7 @@ void stepper_init()
     stepper.internal_Rsense(false);
     stepper.dedge(true);
     stepper.microsteps(MICROSTEPS);
-    stepper.rms_current(2000);
+    stepper.rms_current(100);
     stepper.toff(2);
     stepper.push();
     digitalWrite(EN_PIN, LOW);

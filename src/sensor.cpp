@@ -11,11 +11,11 @@ void sensor_init()
 {
     Wire.begin(I2C_SDA, I2C_SCL, 400000);
     compass.init();
-    compass.setCalibration(-1515,253,-1072,857,-1483,0);
+    compass.setCalibration(-1515, 253, -1072, 857, -1483, 0);
     compass.setSmoothing(10, true);
     mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G);
-    mpu.calibrateGyro();
-    mpu.setThreshold(3);
+    // mpu.calibrateGyro();
+    // mpu.setThreshold(3);
     angler.begin(SPI_MISO, SPI_MOSI, SPI_SCK, SPI_CS);
 }
 double sensor_get_azimuth()
@@ -27,9 +27,18 @@ double sensor_get_azimuth()
 }
 double sensor_get_pitch()
 {
-    Vector norm = mpu.readScaledAccel();
-    double pitch = (1.0 - norm.YAxis) * 90.0;
-    return pitch;
+    Vector norm = mpu.readRawAccel();
+    if (norm.ZAxis > 32768)
+    {
+        norm.ZAxis = 65536 - norm.ZAxis;
+    }
+    if (norm.XAxis > 32768)
+    {
+        norm.XAxis = 65536 - norm.XAxis;
+    }
+    double pitch = atan2(norm.YAxis, sqrt(norm.ZAxis * norm.ZAxis + norm.XAxis * norm.XAxis)) * 180.0 / M_PI; //(1.0 - norm.YAxis) * 90.0;
+    // LOG_UART("x:%.0f  y:%.0f z:%.0f\n", norm.XAxis, norm.YAxis, norm.ZAxis);
+    return 90.0 - pitch;
 }
 double sensor_get_velocity()
 {
@@ -103,6 +112,6 @@ void sensor_calibration()
     {
         done = true;
         LOG_UART("DONE. Copy the line below and paste it into your projects sketch.);\n");
-        LOG_UART("compass.setCalibration(%d,%d,%d,%d,%d,%d);\n",calibrationData[0][0],calibrationData[0][1],calibrationData[1][0],calibrationData[1][1],calibrationData[2][0],calibrationData[2][1]);
+        LOG_UART("compass.setCalibration(%d,%d,%d,%d,%d,%d);\n", calibrationData[0][0], calibrationData[0][1], calibrationData[1][0], calibrationData[1][1], calibrationData[2][0], calibrationData[2][1]);
     }
 }

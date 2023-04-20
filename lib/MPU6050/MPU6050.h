@@ -77,9 +77,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define VECTOR_STRUCT_H
 struct Vector
 {
-    float XAxis;
-    float YAxis;
-    float ZAxis;
+    double XAxis;
+    double YAxis;
+    double ZAxis;
 };
 #endif
 

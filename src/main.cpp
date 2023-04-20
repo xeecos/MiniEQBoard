@@ -6,7 +6,14 @@
 #include <Wire.h>
 int az_offset = 0;
 int alt_offset = 0;
-double temp = 0.0;
+double mag_declination = 3.02;
+double target_az = 0;
+double target_alt = 22.56835;
+double target_velocity = 0.004;
+double current_az = 0;
+double current_alt = 0;
+double current_velocity = 0;
+double current_temp = 0.0;
 void render(void *)
 {
     while (1)
@@ -15,11 +22,11 @@ void render(void *)
         display_draw_cross(64, 32, 127, 64, false);
         display_draw_cross(64 + az_offset, 32 + alt_offset, 10, 10, false);
         char * str = (char*)malloc(16);
-        sprintf(str,"az:%d alt:%d\0",az_offset,alt_offset);
-        display_draw_text(0, 56, str, false);
+        sprintf(str,"AZ:%.0f ALT:%.0f\0",current_az,current_alt);
+        display_draw_text(8, 0, str, false);
         free(str);
         display_render();
-        delay(10);
+        delay(1);
     }
 }
 void setup()
@@ -36,18 +43,11 @@ void setup()
     //     sensor_calibration();
     // }
 }
-double mag_declination = 3.02;
-double target_az = 0;
-double target_alt = 22.56835;
-double target_velocity = 0.004;
-double current_az = 0;
-double current_alt = 0;
-double current_velocity = 0;
 void loop()
 {
-    temp = sensor_get_temperation();
-    current_az = (sensor_get_azimuth() + mag_declination) * 0.2 + current_az * 0.8;
-    current_alt = sensor_get_pitch() * 0.2 + current_alt * 0.8;
+    current_temp = sensor_get_temperation();
+    current_az = (sensor_get_azimuth() + mag_declination) * 0.3 + current_az * 0.7;
+    current_alt = sensor_get_pitch() * 0.3 + current_alt * 0.7;
     current_velocity = sensor_get_velocity();
 
     az_offset = (current_az - target_az) * 5;

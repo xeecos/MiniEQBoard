@@ -19,6 +19,7 @@
 #define SSD1315_SET_VCOM_DESELECT 0xDB
 #define SSD1315_RAM_ON 0xA4
 #define SSD1315_INVERT_OFF 0xA6
+#define SSD1315_INVERT_ON 0xA7
 #define SSD1315_DISPLAY_ON 0xAF
 #define SSD1315_ADDR_PAGE 0x22
 #define SSD1315_ADDR_COLUMN 0x21
@@ -56,8 +57,8 @@ private:
     uint8_t *_buffer;
     int16_t _width = 0;
     int16_t _height = 0;
-
     void sendCommand(uint8_t command);
+
 };
 
 #endif // X_SSD1315_H

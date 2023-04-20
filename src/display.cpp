@@ -29,3 +29,20 @@ void display_draw_cross(int x, int y, int w, int h, bool black)
 {
     _oled.drawCross(x, y, w, h, black);
 }
+void display_draw_text(int x, int y, const char *str, bool black)
+{
+    unsigned char i = 0;
+    while (str[i])
+    {
+        unsigned char C = (str[i]);
+        for (int ii = 0; ii < 8; ii++)
+        {
+            unsigned char b = BasicFont[C*8+ii];
+            for (int j = 0; j < 8; j++) {
+                _oled.setPixel(x + 7 - j, y + ii, ((b >> j) & 1) ? black : !black);
+            }
+        }
+        x+=8;
+        i++;
+    }
+}

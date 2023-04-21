@@ -49,7 +49,7 @@ void setup()
 }
 void loop()
 {
-    current_temp = sensor_get_temperation();
+    // current_temp = sensor_get_temperation();
     current_az = (sensor_get_azimuth() + mag_declination) * 0.3 + current_az * 0.7;
     current_alt = sensor_get_pitch() * 0.3 + current_alt * 0.7;
     // current_velocity = sensor_get_velocity();

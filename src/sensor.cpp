@@ -11,8 +11,9 @@ void sensor_init()
 {
     Wire.begin(I2C_SDA, I2C_SCL, 400000);
     compass.init();
+    // compass.setCalibration(-2491,0,0,5760,-6746,0);
     compass.setCalibration(-1515, 253, -1072, 857, -1483, 0);
-    // compass.setCalibration(-8142,0,0,5365,-11286,0);
+    compass.setSmoothing(10,true);
     mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G);
     mpu.calibrateGyro();
     mpu.setThreshold(3);
@@ -22,7 +23,7 @@ double sensor_get_azimuth()
 {
     compass.read();
     int az = compass.getAzimuth();
-    // LOG_UART("x:%d  y:%d z:%d\n", compass.getX(), compass.getY(), compass.getZ());
+    LOG_UART("%d,%d,%d\n", compass.getX(), compass.getY(), compass.getZ());
     return az;
 }
 double sensor_get_pitch()

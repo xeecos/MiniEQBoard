@@ -12,11 +12,11 @@ void sensor_init()
     Wire.begin(I2C_SDA, I2C_SCL, 400000);
     compass.init();
     compass.setCalibration(-1515, 253, -1072, 857, -1483, 0);
-    compass.setSmoothing(10, true);
+    // compass.setCalibration(-8142,0,0,5365,-11286,0);
     mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G);
-    // mpu.calibrateGyro();
-    // mpu.setThreshold(3);
-    angler.begin(SPI_MISO, SPI_MOSI, SPI_SCK, SPI_CS);
+    mpu.calibrateGyro();
+    mpu.setThreshold(3);
+    // angler.begin(SPI_MISO, SPI_MOSI, SPI_SCK, SPI_CS);
 }
 double sensor_get_azimuth()
 {
@@ -36,15 +36,35 @@ double sensor_get_pitch()
     {
         norm.XAxis = 65536 - norm.XAxis;
     }
-    double pitch = atan2(norm.YAxis, sqrt(norm.ZAxis * norm.ZAxis + norm.XAxis * norm.XAxis)) * 180.0 / M_PI; //(1.0 - norm.YAxis) * 90.0;
+    double pitch = atan2(norm.YAxis, sqrt(norm.ZAxis * norm.ZAxis + norm.XAxis * norm.XAxis)) * 180.0 / M_PI; 
     // LOG_UART("x:%.0f  y:%.0f z:%.0f\n", norm.XAxis, norm.YAxis, norm.ZAxis);
     return 90.0 - pitch;
 }
+double last_angle = 0.0;
+long last_time = 0;
+double last_speed = 0.0;
 double sensor_get_velocity()
 {
-    float speed = 0.0f;
-    angler.getAngleSpeed(speed);
-    return speed;
+    if(micros()-last_time>10000000)
+    {
+        float angle = 0.0f;
+        angler.getAngleValue(angle);
+        long time = micros()-last_time;
+        if(angle>180)
+        {
+            angle -= 360;
+        }
+        double speed = (angle-last_angle)/(time/1000000.0);
+        last_angle = angle;
+        last_time = micros();
+        if(speed<2&&speed>-2)
+        {
+            last_speed = last_speed*0.8 + speed*0.2;
+            LOG_UART("%.4f,%.4f,%.4f\n", -1.0/240.0, last_speed, speed);
+        }
+        return last_speed;
+    }
+    return last_speed;
 }
 double sensor_get_temperation()
 {

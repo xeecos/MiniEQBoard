@@ -117,11 +117,10 @@ void stepper_init()
     stepper.internal_Rsense(false);
     stepper.dedge(true);
     stepper.microsteps(MICROSTEPS);
-    stepper.rms_current(100);
+    stepper.rms_current(750);
     stepper.toff(2);
     stepper.push();
     digitalWrite(EN_PIN, LOW);
-
     timer = timerBegin(0, 80, true);
     timerAttachInterrupt(timer, &stepper_run, true);
     timerAlarmWrite(timer, 10000, true);
@@ -150,7 +149,7 @@ void stepper_reset()
 }
 void stepper_runSpeed(double speed)
 {
-    target_speed = speed * gear_ratio * stepper.microsteps();
+    target_speed = speed;
     stepper_mode = SPEED_MODE;
 }
 void stepper_move(long distance)

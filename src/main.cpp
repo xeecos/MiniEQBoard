@@ -9,11 +9,12 @@ int alt_offset = 0;
 double mag_declination = 3.02;
 double target_az = 0;
 double target_alt = 22.56835;
-double target_velocity = 0.004;
+double target_velocity = 1.0/240.0;
 double current_az = 0;
 double current_alt = 0;
 double current_velocity = 0;
 double current_temp = 0.0;
+double velocity_diff = 0.0;
 void render(void *)
 {
     while (1)
@@ -24,6 +25,8 @@ void render(void *)
         char * str = (char*)malloc(16);
         sprintf(str,"AZ:%.0f ALT:%.0f\0",current_az,current_alt);
         display_draw_text(8, 0, str, false);
+        sprintf(str,"SPD:%.4f\0",target_velocity);
+        display_draw_text(8, 52, str, false);
         free(str);
         display_render();
         delay(1);
@@ -35,6 +38,7 @@ void setup()
     sensor_init();
     display_init();
     stepper_init();
+    stepper_runSpeed(target_velocity);
     service_init();
     LOG_UART("ready!\n");
     xTaskCreatePinnedToCore(render, "render", 8192, NULL, 10, NULL, 1);
@@ -48,7 +52,7 @@ void loop()
     current_temp = sensor_get_temperation();
     current_az = (sensor_get_azimuth() + mag_declination) * 0.3 + current_az * 0.7;
     current_alt = sensor_get_pitch() * 0.3 + current_alt * 0.7;
-    current_velocity = sensor_get_velocity();
+    // current_velocity = sensor_get_velocity();
 
     az_offset = (current_az - target_az) * 5;
     if (az_offset < -50)
@@ -68,8 +72,9 @@ void loop()
     {
         alt_offset = 25;
     }
-    double velocity_diff = current_velocity - target_velocity;
-    stepper_runSpeed((target_velocity - (velocity_diff * 0.1)));
+    // velocity_diff = current_velocity - target_velocity;
+    // if(velocity_diff<0.5&&velocity_diff>-0.5)
+    // stepper_runSpeed((-target_velocity + (velocity_diff * 2.5)));
     service_run();
 }
 /*

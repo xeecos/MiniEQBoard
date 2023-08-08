@@ -121,10 +121,19 @@ void stepper_init()
     stepper.toff(2);
     stepper.push();
     digitalWrite(EN_PIN, LOW);
-    timer = timerBegin(0, 80, true);
-    timerAttachInterrupt(timer, &stepper_run, true);
-    timerAlarmWrite(timer, 10000, true);
-    timerAlarmEnable(timer);
+    // timer = timerBegin(0, 80, true);
+    // timerAttachInterrupt(timer, &stepper_run, true);
+    // timerAlarmWrite(timer, 10000, true);
+    // timerAlarmEnable(timer);
+    int count = 0;
+    while(1)
+    {
+        // 1000/((360/3600/24)/(1.8/256/34))
+        stepper_step(false);
+        delay(49);
+        delayMicroseconds((count%3==0)?633:632);
+        count++;
+    }
 }
 void stepper_microsteps(int microsteps)
 {

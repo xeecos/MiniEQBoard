@@ -29,7 +29,7 @@ void render(void *)
         display_draw_cross(64, 32, 127, 64, false);
         display_draw_cross(64, 32 + alt_offset, 10, 10, false);
         char * str = (char*)malloc(16);
-        sprintf(str,"ALT:%.0f\0",current_alt);
+        sprintf(str,"ALT:%.2f\0",current_alt);
         display_draw_text(8, 0, str, false);
         free(str);
         display_render();

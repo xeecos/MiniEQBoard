@@ -132,6 +132,7 @@ void stepper_init()
         stepper_step(false);
         delay(49);
         delayMicroseconds((count%3==0)?633:632);
+        // delayMicroseconds(100);
         count++;
     }
 }
